@@ -68,7 +68,7 @@ function BookCard({ book, currentUser, myBooks, checkOutBook, checkInBook }) {
                 <button className="flex items-center justify-center" onClick={handleCheckIn}>Return Book</button></div>) : (<div className="flex items-center justify-center" > 
                 { isCheckedOut ? (<div className="flex items-center justify-center" ><button className="flex items-center justify-center">Unavailable</button></div>) : (null)} 
                 { (currentUser && !isCheckedOut) ? (<div className="flex items-center justify-center"><button className="flex items-center justify-center" onClick={handleCheckOut}>Check Me Out</button></div>) : (null)}
-                { (!currentUser && !isCheckedOut) ? (<div className="flex items-center justify-center" ><button className="flex items-center justify-center"><NavLink to="/login" exact className="flex items-center justify-center">Login to Check Out</NavLink></button></div>) : (null)}
+                { (!currentUser && !isCheckedOut) ? (<div className="flex items-center justify-center" ><button className="flex items-center justify-center"><NavLink to="/login" className="flex items-center justify-center">Login to Check Out</NavLink></button></div>) : (null)}
                 </div>)}
         </div>
         

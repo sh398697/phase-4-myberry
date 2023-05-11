@@ -77,20 +77,20 @@ function App() {
         <NavBar currentUser={currentUser} />
         {/* <img src={logo} alt="logo" width={200} height={100}/> */}
         <Routes>
-          <Route  path="/mybooks" element={<MyBooks currentUser={currentUser} books={books}  xx={mybooks} checkInBook={checkInBook}  checkOutBook={checkOutBook}/> }/>
+          <Route path="/mybooks" element={<MyBooks currentUser={currentUser} books={books}  xx={mybooks} checkInBook={checkInBook}  checkOutBook={checkOutBook}/> }/>
           <Route  path="/account" element={
             <Account currentUser={currentUser} setCurrentUser={setCurrentUser} />
           }/>
-          <Route exact path="/login" element={ 
+          <Route path="/login" element={ 
             <Login currentUser={currentUser} setCurrentUser={setCurrentUser} handleLogin={handleLogin}/>
           }/>
-          <Route exact path="/createaccount" element={
+          <Route path="/createaccount" element={
             <CreateAccount />
           }/>
-          <Route exact path="/edituser" element={
+          <Route path="/edituser" element={
             <EditUser currentUser={currentUser} setCurrentUser={setCurrentUser} />
           }/>
-          <Route exact path= "/"  element={
+          <Route path= "/" element={
             <Home books={books} currentUser={currentUser} setCurrentUser={setCurrentUser} checkOutBook={checkOutBook}  checkInBook={checkInBook}  />
           }/>
         </Routes>
