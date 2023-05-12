@@ -216,6 +216,7 @@ api.add_resource(Logout, '/logout')
 
 class CheckSession(Resource):
     def get(self):
+        print(session)
         user = User.query.filter(User.id == session.get('user_id')).first()
         print(session)
         if user:
