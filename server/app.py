@@ -12,7 +12,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
 app.secret_key = b"\x7f\x7f(\xe8\x0c('\xa8\xa5\x82pb\t\x1d>rZ\x8c^\x7f\xbb\xe2L|"
 
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, origins=["http://localhost:3000", "https://flatiron-myberry-client.onrender.com"])
 migrate = Migrate(app, db)
 
 db.init_app(app)
@@ -181,7 +181,6 @@ class CreateLogsById(Resource):
         db.session.commit()
         return make_response('', 200)
 api.add_resource(CreateLogsById, '/create_logs/<int:id>')
-
 
 class Login(Resource):
     def post(self):
