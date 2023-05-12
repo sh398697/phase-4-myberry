@@ -19,18 +19,18 @@ function BookCard({ book, currentUser, myBooks, checkOutBook, checkInBook }) {
     const truncatedDescription = description.substring(0, 50) + '...'
 
     function handleCheckOut() {
+    
         const requestCheckout = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 user_id: currentUser.id,
-                book_id: book.id,
-                due_date: DateTime.now().plus({ days: 14 }).toUnixInteger()
+                book_id: book.id
             })
         };
         fetch(`${API_URL}/create_logs`, requestCheckout)
-            .then(r => r.json())
-            .then(r => {
+           .then(r => r.json())
+           .then(r => {
                 checkOutBook(r)
             })
     }

@@ -44,44 +44,38 @@ function App() {
     }
   }, []);
 
-  function checkCookie() {
-    const token = Cookies.get("token");
-    if (token) {
-      fetch(`${API_URL}/get-user-data`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw new Error("Network response was not ok.");
+    const handleLogin = () => {
+      const token = Cookies.get("token");
+      if (token) {
+        fetch(`${API_URL}/get-user-data`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         })
-        .then((data) => {
-          console.log("Use Effect Token called")
-          console.log(data);
-          setCurrentUser({ id: data.id, email: data.email, fname: data.fname, lname: data.lname, phone: data.phone});
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    }}
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error("Network response was not ok.");
+          })
+          .then((data) => {
+            console.log("Use Effect Token called")
+            console.log(data);
+            setCurrentUser({ email: data.email, fname: data.fname, lname: data.lname, phone: data.phone});
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    };
 
-
-
-  const handleLogin = (user) => {
-    setCurrentUser(user)
-    console.log(user.fname)
-  }
-
-  function checkOutBook(book) {
+  function checkOutBook(r) {
     const updatedBooks = books.map(bookObj => {
-      if ((bookObj.id) === (book.book_id)) {
+      if ((bookObj.id) === (r.book_id)) {
         bookObj.checkout_log = true;
-        bookObj.checkout_id = book.id;
-        bookObj.user_id = book.user_id;
+        bookObj.checkout_id = r.id;
+        bookObj.user_id = r.user_id;
         return bookObj;
       } else {
         return bookObj;
@@ -143,7 +137,7 @@ function App() {
           <Account currentUser={currentUser} setCurrentUser={setCurrentUser} onLogout={handleLogout} />
         } />
         <Route exact path="/login" element={
-          <Login currentUser={currentUser} setCurrentUser={setCurrentUser} handleLogin={handleLogin} checkCookie={checkCookie} />
+          <Login users={users} currentUser={currentUser} setCurrentUser={setCurrentUser} handleLogin={handleLogin} />
         } />
         <Route exact path="/createaccount" element={
           <CreateAccount />

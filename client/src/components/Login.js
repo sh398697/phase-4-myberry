@@ -3,7 +3,7 @@ import { Route, useNavigate } from "react-router-dom";
 import API_URL from "../apiConfig.js";
 import NavBar from "./NavBar.js";
 
-function Login({ currentUser, setCurrentUser, handleLogin, checkCookie }) {
+function Login({ users, currentUser, setCurrentUser, handleLogin, checkCookie }) {
 
     const [newEmail, setNewEmail] = useState('')
     const [newPassword, setNewPassword] = useState('')
@@ -13,17 +13,7 @@ function Login({ currentUser, setCurrentUser, handleLogin, checkCookie }) {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-
     const formField = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-
-    function handleLoginResult(user) {
-        if (user.hasOwnProperty('id')) {
-            console.log("handleLoginResult called");
-            console.log(user);
-            handleLogin(user);
-            navigate("/")
-        }
-    }
 
     function handleLoginSubmit(e) {
         e.preventDefault();
@@ -40,8 +30,7 @@ function Login({ currentUser, setCurrentUser, handleLogin, checkCookie }) {
             };
             fetch(`${API_URL}/login`, requestOptions)
                 .then(response => response.json())
-                //.then(handleLogin)
-                .then(checkCookie)
+                .then(handleLogin)
                 .then(navigate("/"))
         } catch (err) {
             setFormErrors(err.error);

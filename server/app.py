@@ -160,8 +160,8 @@ class CreateLogs(Resource):
         try:
             new_log = CheckoutLog(
                 user_id=data['user_id'],
-                book_id=data['book_id'],
-                due_date= datetime.fromtimestamp(data['due_date'])
+                book_id=data['book_id']
+                # due_date= datetime.fromtimestamp(data['due_date'])
             )
             db.session.add(new_log)
             db.session.commit()
