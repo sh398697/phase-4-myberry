@@ -5,6 +5,7 @@ import Account from './components/Account'
 import Login from './components/Login'
 import CreateAccount from './components/CreateAccount'
 import EditUser from './components/EditUser'
+import Cookies from "js-cookie";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import API_URL from "./apiConfig.js";
 import NavBar from './components/NavBar';
@@ -18,19 +19,55 @@ function App() {
   const [currentUser, setCurrentUser] = useState('')
 
   useEffect(() => {
-    fetch(`${API_URL}/check_session`, { credentials: 'include' })
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((user) => {
-              console.log(user)
-              setCurrentUser(user)
-            });
-        }
-      });
+    const token = Cookies.get("token");
+    if (token) {
+      fetch(`${API_URL}/get-user-data`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error("Network response was not ok.");
+        })
+        .then((data) => {
+          console.log("Use Effect Token called")
+          console.log(data);
+          setCurrentUser({ id: data.id, email: data.email, fname: data.fname, lname: data.lname, phone: data.phone});
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
   }, []);
 
-
+  function checkCookie() {
+    const token = Cookies.get("token");
+    if (token) {
+      fetch(`${API_URL}/get-user-data`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error("Network response was not ok.");
+        })
+        .then((data) => {
+          console.log("Use Effect Token called")
+          console.log(data);
+          setCurrentUser({ id: data.id, email: data.email, fname: data.fname, lname: data.lname, phone: data.phone});
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }}
 
 
 
@@ -79,9 +116,9 @@ function App() {
       .then(setBooks)
   }, [])
 
-
-
   const navigate = useNavigate();
+
+
   function handleLogout() {
     fetch(`${API_URL}/logout`, {
       method: "DELETE",
@@ -89,6 +126,7 @@ function App() {
     })
       .then(setCurrentUser(''))
       .then(navigate("/"))
+      .then(Cookies.remove("token"))
   }
 
 
@@ -105,7 +143,7 @@ function App() {
           <Account currentUser={currentUser} setCurrentUser={setCurrentUser} onLogout={handleLogout} />
         } />
         <Route exact path="/login" element={
-          <Login currentUser={currentUser} setCurrentUser={setCurrentUser} handleLogin={handleLogin} />
+          <Login currentUser={currentUser} setCurrentUser={setCurrentUser} handleLogin={handleLogin} checkCookie={checkCookie} />
         } />
         <Route exact path="/createaccount" element={
           <CreateAccount />

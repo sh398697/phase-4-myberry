@@ -4,19 +4,22 @@ from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from models import db, User, Book, CheckoutLog
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
 app.secret_key = b"\x7f\x7f(\xe8\x0c('\xa8\xa5\x82pb\t\x1d>rZ\x8c^\x7f\xbb\xe2L|"
+app.config['JWT_SECRET_KEY'] = '2b5faaf05ca77b1e23aa9f3e1c05d840'
 
 CORS(app, supports_credentials=True, origins=["http://localhost:3000", "https://flatiron-myberry-client.onrender.com"])
 migrate = Migrate(app, db)
 
 db.init_app(app)
 api = Api(app)
+jwt = JWTManager(app)
 
 
 @app.route('/')
@@ -188,16 +191,23 @@ class Login(Resource):
         email = data['email']
         password = data['password']
         user = User.query.filter_by(email=email).first()
-        if user:
-            if (user.password == password):
-                print(f'{session}  ')
-                print(f'{user.id } ')
-                
-                session['user_id'] = user.id
-                print(f'{session}  ')
-                
-                return make_response(user.to_dict(), 200)
-        return make_response({'error': '401 Unauthorized'}, 401)
+        if not user or (not (user.password == password)):
+            return make_response(
+                {"error": "Invalid email or password"},
+                401,
+                {"Content-Type": "application/json"}
+            )
+        token = create_access_token(identity=user.id)
+        response = make_response(
+         {"token": token},
+            200,
+            {"Content-Type": "application/json"}
+        )
+        # Set the cookie with an expiration time of 24 hours
+        expires = datetime.now() + timedelta(days=1)
+        response.set_cookie("token", token, expires=expires)
+        return response
+    
 api.add_resource(Login, '/login')
 
 
@@ -225,6 +235,34 @@ class CheckSession(Resource):
 
 
 api.add_resource(CheckSession, '/check_session')
+
+@app.route('/get-user-data', methods=['GET'])
+@jwt_required()
+def get_user_data():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if user:
+        user_dict = {
+            "id": user.id,
+            "fname": user.fname,
+            "lname": user.lname,
+            "email": user.email,
+            "phone": user.phone,
+        }
+        response = make_response(
+            user_dict,
+            200,
+            {"Content-Type": "application/json"}
+        )
+    else:
+        response = make_response(
+            {"error": "User not found"},
+            404,
+            {"Content-Type": "application/json"}
+        )
+
+    return response
 
 if __name__ == '__main__':
     app.run(port=5555)

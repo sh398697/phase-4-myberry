@@ -3,7 +3,7 @@ import { Route, useNavigate } from "react-router-dom";
 import API_URL from "../apiConfig.js";
 import NavBar from "./NavBar.js";
 
-function Login({ currentUser, setCurrentUser, handleLogin }) {
+function Login({ currentUser, setCurrentUser, handleLogin, checkCookie }) {
 
     const [newEmail, setNewEmail] = useState('')
     const [newPassword, setNewPassword] = useState('')
@@ -18,6 +18,7 @@ function Login({ currentUser, setCurrentUser, handleLogin }) {
 
     function handleLoginResult(user) {
         if (user.hasOwnProperty('id')) {
+            console.log("handleLoginResult called");
             console.log(user);
             handleLogin(user);
             navigate("/")
@@ -27,8 +28,6 @@ function Login({ currentUser, setCurrentUser, handleLogin }) {
     function handleLoginSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
-
-
         try {
             const requestOptions = {
                 method: 'POST',
@@ -40,27 +39,12 @@ function Login({ currentUser, setCurrentUser, handleLogin }) {
                 })
             };
             fetch(`${API_URL}/login`, requestOptions)
-                .then((r) => {
-                    setIsLoading(false);
-
-                    if (r.ok) {
-                        r.json().then((user) => {
-                            handleLoginResult(user);
-                            
-                        })
-                    } else {
-                        r.json().then((err) => {
-                            setFormErrors(err.error)
-                        });
-                    }
-                })
-            
-            
+                .then(response => response.json())
+                .then(checkCookie)
+                .then(navigate("/"))
         } catch (err) {
             setFormErrors(err.error);
         }
-
-
     }
 
     return (
