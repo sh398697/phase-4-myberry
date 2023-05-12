@@ -29,7 +29,7 @@ function Login({ users, currentUser, setCurrentUser, handleLogin, checkCookie })
                 })
             };
             fetch(`${API_URL}/login`, requestOptions)
-                .then(handleLogin)
+                .then(handleLogin(newEmail))
                 .then(navigate("/"))
         } catch (err) {
             setFormErrors(err.error);

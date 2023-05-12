@@ -45,32 +45,14 @@ function App() {
     }
   }, []);
 
-    const handleLogin = () => {
-      const token = Cookies.get("token");
-      if (token) {
-        fetch(`${API_URL}/get-user-data`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              return response.json();
-            }
-            throw new Error("Network response was not ok.");
-          })
-          .then((data) => {
-            console.log("Use Effect Token called")
-            console.log(data);
-            const newLoggedInUser = { id: data.id, email: data.email, fname: data.fname, lname: data.lname, phone: data.phone}
-            setCurrentUser(newLoggedInUser);
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
+    const handleLogin = (newEmail) => {
+      const newLoggedInUser = users.map(user => {
+        if (user.email == newEmail) {
+          return user;
+        }
+      })
+      setCurrentUser(newLoggedInUser[0]);
       }
-    };
 
   function checkOutBook(r) {
     const updatedBooks = books.map(bookObj => {
