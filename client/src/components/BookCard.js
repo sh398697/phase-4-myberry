@@ -43,7 +43,7 @@ function BookCard({ book, currentUser, myBooks, checkOutBook, checkInBook }) {
             headers: { 'Content-Type': 'application/json' },
         }
         fetch(`${API_URL}/create_logs/${deleteId}`, deleteCheckout)
-            .then(checkInBook(book))
+            .then(checkInBook(deleteId))
     }
 
 

@@ -29,7 +29,6 @@ function Login({ users, currentUser, setCurrentUser, handleLogin, checkCookie })
                 })
             };
             fetch(`${API_URL}/login`, requestOptions)
-                .then(response => response.json())
                 .then(handleLogin)
                 .then(navigate("/"))
         } catch (err) {

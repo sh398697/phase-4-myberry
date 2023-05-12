@@ -36,7 +36,8 @@ function App() {
         .then((data) => {
           console.log("Use Effect Token called")
           console.log(data);
-          setCurrentUser({ id: data.id, email: data.email, fname: data.fname, lname: data.lname, phone: data.phone});
+          const newCookiedUser = { id: data.id, email: data.email, fname: data.fname, lname: data.lname, phone: data.phone}
+          setCurrentUser(newCookiedUser);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -62,7 +63,8 @@ function App() {
           .then((data) => {
             console.log("Use Effect Token called")
             console.log(data);
-            setCurrentUser({ email: data.email, fname: data.fname, lname: data.lname, phone: data.phone});
+            const newLoggedInUser = { id: data.id, email: data.email, fname: data.fname, lname: data.lname, phone: data.phone}
+            setCurrentUser(newLoggedInUser);
           })
           .catch((error) => {
             console.error("Error:", error);
@@ -72,9 +74,9 @@ function App() {
 
   function checkOutBook(r) {
     const updatedBooks = books.map(bookObj => {
-      if ((bookObj.id) === (r.book_id)) {
+      if ((bookObj.id) == (r.book_id)) {
         bookObj.checkout_log = true;
-        bookObj.checkout_id = r.id;
+        bookObj.checkout_id = r.checkout_id;
         bookObj.user_id = r.user_id;
         return bookObj;
       } else {
@@ -84,9 +86,9 @@ function App() {
     setBooks(updatedBooks);
   }
 
-  function checkInBook(book) {
+  function checkInBook(deleteID) {
     const updatedBooks = books.map(bookObj => {
-      if ((bookObj.id) === (book.id)) {
+      if ((bookObj.checkout_id) == (deleteID)) {
         bookObj.checkout_log = false;
         bookObj.checkout_id = null;
         bookObj.user_id = null;
@@ -96,6 +98,7 @@ function App() {
       }
     });
     setBooks(updatedBooks);
+    //mybooks = books.filter(bookObj => bookObj.user_id == currentUser.id)
   }
 
   useEffect(() => {
@@ -123,9 +126,7 @@ function App() {
       .then(Cookies.remove("token"))
   }
 
-
-  const mybooks = books.filter(bookObj => bookObj.user_id === currentUser.id)
-
+  let mybooks = books.filter(bookObj => bookObj.user_id == currentUser.id)
 
   return (
     <div className="App bg-yellow-50 h-screen">

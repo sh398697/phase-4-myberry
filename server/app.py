@@ -7,6 +7,7 @@ import random
 from datetime import datetime, timedelta
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -161,7 +162,6 @@ class CreateLogs(Resource):
             new_log = CheckoutLog(
                 user_id=data['user_id'],
                 book_id=data['book_id']
-                # due_date= datetime.fromtimestamp(data['due_date'])
             )
             db.session.add(new_log)
             db.session.commit()
@@ -248,7 +248,7 @@ def get_user_data():
             "fname": user.fname,
             "lname": user.lname,
             "email": user.email,
-            "phone": user.phone,
+            "phone": user.phone
         }
         response = make_response(
             user_dict,
